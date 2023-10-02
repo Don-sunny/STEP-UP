@@ -28,8 +28,11 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  animated_notch_bottom_bar: ^1.0.0
+  card_swiper: ^3.0.1
   cloud_firestore: ^4.9.2
   cupertino_icons: ^1.0.2
+  dynamic_height_grid_view: ^0.0.4
   firebase_auth: ^4.10.0
   firebase_core: ^2.16.0
   firebase_storage: ^11.2.7
@@ -37,6 +40,7 @@ dependencies:
     sdk: flutter
   flutter_iconly: ^1.0.2
   google_sign_in: ^6.1.5
+  iconly: ^1.0.1
   ionicons: ^0.2.2
   provider: ^6.0.5
   shared_preferences: ^2.2.1
@@ -55,9 +59,10 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/images/
+    - assets/images/logos/
+    - assets/images/latest_arrival/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

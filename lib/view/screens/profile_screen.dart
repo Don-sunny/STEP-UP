@@ -1,20 +1,28 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:provider/provider.dart';
 import 'package:step_up/controller/auth/auth_functions.dart';
 import 'package:step_up/util/widgets/circle_widget.dart';
 
-class UserProfileScreen extends StatelessWidget {
+class UserProfileScreen extends StatefulWidget {
   static const rootName = '/UserProfileScreen';
-  UserProfileScreen({super.key});
+  const UserProfileScreen({super.key});
 
+  @override
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
+}
+
+class _UserProfileScreenState extends State<UserProfileScreen> {
   final auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
+    final providerfunc = Provider.of<AuthFunctions>(context);
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
+              color: Colors.black,
               onPressed: () {
                 {}
               },
@@ -23,6 +31,9 @@ class UserProfileScreen extends StatelessWidget {
               )),
           title: const Text(
             'User Profile',
+            style: TextStyle(
+              color: Colors.black,
+            ),
           ),
         ),
         body: Column(
@@ -52,9 +63,9 @@ class UserProfileScreen extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[350],
-                  borderRadius: const BorderRadius.horizontal(
-                    left: Radius.circular(30),
-                    right: Radius.circular(30),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
                   ),
                 ),
                 child: ListView(
@@ -104,7 +115,10 @@ class UserProfileScreen extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green),
                             onPressed: () async {
-                              await auth.signOut();
+                              await providerfunc.logout(
+                                context,
+                                mounted,
+                              );
                             },
                             icon: const Icon(Icons.logout),
                             label: const Text('Logout'))
@@ -148,9 +162,7 @@ class ProfileListTileWidget extends StatelessWidget {
           ),
         ),
         trailing: IconButton(
-          onPressed: () async {
-            await AuthFunctions.logout();
-          },
+          onPressed: () async {},
           icon: const Icon(
             Icons.arrow_forward_outlined,
             color: Colors.green,

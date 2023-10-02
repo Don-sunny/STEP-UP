@@ -9,6 +9,7 @@ import 'package:step_up/util/widgets/subtitle_widget.dart';
 import 'package:step_up/util/widgets/text_form_title_widget.dart';
 import 'package:step_up/view/screens/auth/sign_up_screen.dart';
 import 'package:step_up/view/screens/profile_screen.dart';
+import '../../../util/widgets/app_bar_title_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/LoginScreen';
@@ -32,10 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text(
-          'Login',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        automaticallyImplyLeading: false,
+        title: const AppBarTitleWidget(),
       ),
       body: Form(
         key: _formkey,
@@ -135,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: TextButton(
                       onPressed: () {},
                       child: const Text(
-                        'Forgotn Password?',
+                        'Forgot Password?',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 20,

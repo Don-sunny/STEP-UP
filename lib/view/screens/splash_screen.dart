@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
         UserProfileScreen.rootName,
       );
     } else {
-      Navigator.pushNamed(
+      Navigator.pushReplacementNamed(
         context,
         LoginScreen.routeName,
       );

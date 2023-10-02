@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:step_up/controller/auth/auth_functions.dart';
@@ -6,6 +7,8 @@ import 'package:step_up/util/widgets/circle_widget.dart';
 import 'package:step_up/util/widgets/diverder_widget.dart';
 import 'package:step_up/util/widgets/subtitle_widget.dart';
 import 'package:step_up/util/widgets/text_form_title_widget.dart';
+import 'package:step_up/view/screens/auth/login_screen.dart';
+import 'package:step_up/view/screens/profile_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   static const routName = '/SignupScreen';
@@ -29,9 +32,11 @@ class _SignupScreenState extends State<SignupScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           'Signup',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.black, fontSize: 25),
         ),
       ),
       body: Form(
@@ -262,19 +267,31 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(
                 height: 50,
               ),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircleWiget(
+                  const CircleWiget(
                     color: Colors.blue,
                     icon: Icons.facebook,
                     iconSize: 30,
                   ),
-                  CircleWiget(
-                    icon: Ionicons.logo_google,
-                    color: Colors.red,
+                  InkWell(
+                    onTap: () async {
+                      UserCredential? userCredential =
+                          await AuthFunctions.signInWithGoogle();
+                      if (userCredential != null) {
+                        if (!mounted) return;
+                        Navigator.pushNamed(
+                            context, UserProfileScreen.rootName);
+                        print('user sigined in');
+                      }
+                    },
+                    child: const CircleWiget(
+                      icon: Ionicons.logo_google,
+                      color: Colors.red,
+                    ),
                   ),
-                  CircleWiget(
+                  const CircleWiget(
                     icon: Ionicons.logo_twitter,
                     color: Color.fromARGB(255, 19, 200, 232),
                   ),
@@ -292,9 +309,11 @@ class _SignupScreenState extends State<SignupScreen> {
                     color: Colors.grey,
                   ),
                   TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, LoginScreen.routeName);
+                      },
                       child: const Text(
-                        'Sign in',
+                        'Login',
                         style: TextStyle(
                           color: Colors.red,
                           fontSize: 18,
