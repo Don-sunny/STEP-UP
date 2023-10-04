@@ -63,6 +63,7 @@ class HomeScreen extends StatelessWidget {
               SizedBox(
                 height: size.height * 0.25,
                 child: Swiper(
+                  autoplay: true,
                   itemBuilder: (BuildContext context, int index) {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(15),

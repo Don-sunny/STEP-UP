@@ -61,12 +61,14 @@ class MyApp extends StatelessWidget {
                 theme: Styles.themeData(
                     isDarkTheme: themeProvider.getIsDarkTheme,
                     context: context),
-                home: const RootScreen(),
+                home: const SignupScreen(),
                 routes: {
                   SignupScreen.routName: (context) => const SignupScreen(),
-                  UserProfileScreen.rootName: (context) => UserProfileScreen(),
+                  UserProfileScreen.rootName: (context) =>
+                      const UserProfileScreen(),
                   LoginScreen.routeName: (context) => const LoginScreen(),
                   SearchScreen.rootName: (context) => SearchScreen(),
+                  RootScreen.rootName: (context) => const RootScreen(),
                 },
               );
             }),

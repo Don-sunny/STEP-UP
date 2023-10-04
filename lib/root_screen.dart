@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:step_up/view/screens/cart_screen.dart';
 import 'package:step_up/view/screens/home_screen.dart';
 import 'package:step_up/view/screens/profile_screen.dart';
-import 'package:step_up/view/screens/search_screen.dart';
 import 'package:step_up/view/screens/wishlist_screen.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({super.key});
+  static String rootName = '/RootScreen';
 
   @override
   State<RootScreen> createState() => _RootScreenState();
@@ -30,7 +30,7 @@ class _RootScreenState extends State<RootScreen> {
     HomeScreen(),
     const CartScreen(),
     const WishlistScreen(),
-    UserProfileScreen()
+    const UserProfileScreen()
   ];
 
   @override

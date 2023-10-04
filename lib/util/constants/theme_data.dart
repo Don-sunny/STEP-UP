@@ -17,7 +17,7 @@ class Styles {
       ),
       brightness: isDarkTheme ? Brightness.dark : Brightness.light,
       inputDecorationTheme: InputDecorationTheme(
-        contentPadding: const EdgeInsets.all(25),
+        contentPadding: const EdgeInsets.all(10),
         fillColor: Colors.grey[300],
         filled: true,
         border: InputBorder.none,

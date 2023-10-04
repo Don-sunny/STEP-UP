@@ -42,7 +42,7 @@ class LatestArrival extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SubTitleWidget(
-                        fontSize: 16,
+                        fontSize: 14,
                         text: 'Nike shoes',
                       ),
                       Icon(IconlyLight.heart)
@@ -52,7 +52,7 @@ class LatestArrival extends StatelessWidget {
                     height: 10,
                   ),
                   SubTitleWidget(
-                    fontSize: 18,
+                    fontSize: 16,
                     text: '\$ 100',
                     color: Colors.green,
                   ),
