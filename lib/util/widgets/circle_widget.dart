@@ -7,7 +7,7 @@ class CircleWiget extends StatelessWidget {
     this.icon,
     this.iconColor = Colors.white,
     this.iconSize,
-    this.width = 70,
+    this.width = 50,
     this.height = 70,
   });
   final Color color;

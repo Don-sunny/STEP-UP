@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:provider/provider.dart';
 import 'package:step_up/controller/auth/auth_functions.dart';
 import 'package:step_up/util/widgets/circle_widget.dart';
+import 'package:step_up/view/screens/auth/login_screen.dart';
 
 class UserProfileScreen extends StatefulWidget {
   static const rootName = '/UserProfileScreen';
@@ -18,7 +19,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final providerfunc = Provider.of<AuthFunctions>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -115,10 +116,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green),
                             onPressed: () async {
-                              await providerfunc.logout(
-                                context,
-                                mounted,
-                              );
+                              final auth = FirebaseAuth.instance;
+                              await auth.signOut();
+                              if (!mounted) return;
+                              Navigator.pushNamed(
+                                  context, LoginScreen.routeName);
+                              // await providerfunc.logout(
+                              //   context,
+                              //   mounted,
+                              // );
                             },
                             icon: const Icon(Icons.logout),
                             label: const Text('Logout'))

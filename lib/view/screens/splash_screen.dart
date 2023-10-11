@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:step_up/root_screen.dart';
 import 'package:step_up/view/screens/auth/login_screen.dart';
 import 'package:step_up/view/screens/profile_screen.dart';
 
@@ -26,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (auth.currentUser?.uid != null) {
       Navigator.pushReplacementNamed(
         context,
-        UserProfileScreen.rootName,
+        RootScreen.rootName,
       );
     } else {
       Navigator.pushReplacementNamed(

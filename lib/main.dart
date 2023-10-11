@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:step_up/controller/auth/auth_functions.dart';
 import 'package:step_up/controller/providers/theme_provider.dart';
+import 'package:step_up/controller/providers/user_provider.dart';
 import 'package:step_up/root_screen.dart';
 import 'package:step_up/util/constants/theme_data.dart';
-import 'package:step_up/view/screens/address_screen.dart';
 import 'package:step_up/view/screens/auth/login_screen.dart';
 
 import 'package:step_up/view/screens/auth/sign_up_screen.dart';
-import 'package:step_up/view/screens/congrats_screen.dart';
-import 'package:step_up/view/screens/home_screen.dart';
 import 'package:step_up/view/screens/profile_screen.dart';
 import 'package:step_up/view/screens/search_screen.dart';
 
@@ -48,10 +46,16 @@ class MyApp extends StatelessWidget {
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(create: (_) {
-                return AuthFunctions();
+                return AuthProvider();
               }),
               ChangeNotifierProvider(create: (_) {
                 return ThemeProvider();
+              }),
+              ChangeNotifierProvider(create: (_) {
+                return UserProvider();
+              }),
+              ChangeNotifierProvider(create: (_) {
+                return AuthProvider();
               })
             ],
             child:

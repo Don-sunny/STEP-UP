@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">stepUp_firebase_auth</string>
+    <string name="facebook_app_id">853775766052408</string>
+    <string name="fb_login_protocol_scheme">fb853775766052408</string>
+    <string name="facebook_client_token">df1d1823ca29ded7556ad8d3cc6e6f86</string>
+</resources>

@@ -1,7 +1,7 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:step_up/view/screens/cart_screen.dart';
-import 'package:step_up/view/screens/home_screen.dart';
+import 'package:step_up/view/screens/home/home_screen.dart';
 import 'package:step_up/view/screens/profile_screen.dart';
 import 'package:step_up/view/screens/wishlist_screen.dart';
 

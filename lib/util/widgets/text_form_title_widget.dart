@@ -14,7 +14,7 @@ class TextFormTitleWidget extends StatelessWidget {
       name,
       style: const TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 20,
+        fontSize: 17,
       ),
     );
   }

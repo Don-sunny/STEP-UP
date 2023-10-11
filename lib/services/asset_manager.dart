@@ -1,5 +1,20 @@
 class AssetManageer {
   static const String imagePath = 'assets/images';
+  static const String warningImagePath = '$imagePath/alert';
+  static const String profileImagePath = '$imagePath/profile';
+
+  //profile
+  static String about = '$profileImagePath/about.png';
+  static String orders = '$profileImagePath/orders.png';
+  static String terms = '$profileImagePath/terms.png';
+  static String wishlist = '$profileImagePath/wishlist.png';
+  static String dark = '$profileImagePath/dark.png';
+  static String light = '$profileImagePath/light.png';
+
+  //warnings
+
+  static String alert = '$warningImagePath/alert.png';
+  static String warning = '$warningImagePath/warning.png';
 
   static const String banner1 = '$imagePath/banner1.jpg';
   static const String banner2 = '$imagePath/banner2.jpg';

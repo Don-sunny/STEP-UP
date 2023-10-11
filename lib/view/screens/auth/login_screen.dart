@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:provider/provider.dart';
 import 'package:step_up/controller/auth/auth_functions.dart';
 import 'package:step_up/util/constants/validator.dart';
 import 'package:step_up/util/widgets/circle_widget.dart';
@@ -30,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -158,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          await AuthFunctions.loginFuct(
+                          await authProvider.loginFuct(
                             context: context,
                             mounted: mounted,
                             emailController: emailController,
@@ -215,12 +217,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   InkWell(
                     onTap: () async {
                       UserCredential? userCredential =
-                          await AuthFunctions.signInWithGoogle();
+                          await authProvider.signInWithGoogle();
                       if (userCredential != null) {
                         if (!mounted) return;
                         Navigator.pushNamed(
                             context, UserProfileScreen.rootName);
-                        print('user sigined in');
                       }
                     },
                     child: const CircleWiget(

@@ -1,15 +1,22 @@
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:provider/provider.dart';
 import 'package:step_up/controller/auth/auth_functions.dart';
 import 'package:step_up/root_screen.dart';
+import 'package:step_up/services/app_function/error_warning_dialog.dart';
+import 'package:step_up/services/image_picker_function.dart';
 import 'package:step_up/util/constants/validator.dart';
 import 'package:step_up/util/widgets/circle_widget.dart';
 import 'package:step_up/util/widgets/diverder_widget.dart';
 import 'package:step_up/util/widgets/subtitle_widget.dart';
 import 'package:step_up/util/widgets/text_form_title_widget.dart';
 import 'package:step_up/view/screens/auth/login_screen.dart';
-import 'package:step_up/view/screens/profile_screen.dart';
+import 'package:step_up/view/screens/auth/widgets/image_picker.dart';
 
 class SignupScreen extends StatefulWidget {
   static const routName = '/SignupScreen';
@@ -20,6 +27,9 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  XFile? _pickedImage;
+  String? _userImageUrl;
+
   final _formkey = GlobalKey<FormState>();
 
   final TextEditingController emailController = TextEditingController();
@@ -28,9 +38,88 @@ class _SignupScreenState extends State<SignupScreen> {
 
   final TextEditingController rePasswordController = TextEditingController();
 
+  final TextEditingController nameEditingController = TextEditingController();
+
+  final auth = FirebaseAuth.instance;
+
+  Future<void> localImagePicker() async {
+    final ImagePicker imagePicker = ImagePicker();
+    await MyAppFunctioins.imagePickerDialog(
+        context: context,
+        cameraFun: () async {
+          _pickedImage =
+              await imagePicker.pickImage(source: ImageSource.camera);
+          setState(() {});
+        },
+        galleryFun: () async {
+          await imagePicker.pickImage(source: ImageSource.gallery);
+          setState(() {});
+        },
+        removeFun: () {
+          setState(() {
+            _pickedImage = null;
+          });
+        });
+  }
+
+  Future<void> _registerFun() async {
+    final isValid = _formkey.currentState!.validate();
+    // Focus.of(context).unfocus();
+    if (_pickedImage == null) {
+      WarningErrorDialog.showErrorOrWarningDialog(
+          context: context,
+          subtitle: 'Make  sure to pick up an image',
+          btnText: 'Pick Image',
+          fct: () {});
+      return;
+    }
+    if (isValid) {
+      try {
+        await auth.createUserWithEmailAndPassword(
+            email: emailController.text.trim(),
+            password: passwordController.text.trim());
+
+        final User? user = auth.currentUser;
+        final String uid = user!.uid;
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('userImages')
+            .child('$uid.jpg');
+        await ref.putFile(File(_pickedImage!.path));
+        _userImageUrl = await ref.getDownloadURL();
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'userId': uid,
+          'userName': nameEditingController.text.trim(),
+          'userImageUrl': _userImageUrl,
+          'userEmail': emailController.text.trim(),
+          'createdAt': Timestamp.now(),
+          'userWish': [],
+          'userCart': [],
+        });
+        if (!mounted) return;
+        Navigator.pushNamed(context, RootScreen.rootName);
+      } on FirebaseAuthException catch (e) {
+        WarningErrorDialog.showErrorOrWarningDialog(
+          btnText: 'Back',
+          context: context,
+          subtitle: e.message.toString(),
+          fct: () {},
+        );
+      } catch (error) {
+        await WarningErrorDialog.showErrorOrWarningDialog(
+          btnText: 'Back',
+          context: context,
+          subtitle: error.toString(),
+          fct: () {},
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -52,171 +141,143 @@ class _SignupScreenState extends State<SignupScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 20,
+                    Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        height: size.width * 0.3,
+                        width: size.width * 0.3,
+                        child: PickImageWidget(
+                          pickedImage: _pickedImage,
+                          function: () async {
+                            await localImagePicker();
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height * 0.01,
+                    ),
+                    const TextFormTitleWidget(
+                      name: 'Name',
+                    ),
+                    SizedBox(
+                      height: size.height * 0.01,
+                    ),
+                    TextFormField(
+                      controller: nameEditingController,
+                      decoration: const InputDecoration(
+                        hintText: 'Full name',
+                      ),
+                      validator: (value) {
+                        return MyValidators.displayNamevalidator(value);
+                      },
+                    ),
+                    SizedBox(
+                      height: size.height * 0.02,
                     ),
                     const TextFormTitleWidget(
                       name: 'Email Id',
                     ),
+                    SizedBox(
+                      height: size.height * 0.01,
+                    ),
                     TextFormField(
                       controller: emailController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'sample@gmail.com',
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black,
-                          ),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(12),
-                          ),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 1,
-                            color: Colors.black,
-                          ),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              width: 1,
-                              color: Theme.of(context).colorScheme.error),
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 1,
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
                       ),
                       validator: (value) {
                         return MyValidators.emailValidator(value);
                       },
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const TextFormTitleWidget(
-                      name: 'Password',
+                    SizedBox(
+                      height: size.height * 0.02,
                     ),
                     Row(
                       children: [
                         Expanded(
-                          child: TextFormField(
-                            controller: passwordController,
-                            decoration: InputDecoration(
-                              hintText: 'password',
-                              border: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.black,
-                                ),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(12),
-                                ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const TextFormTitleWidget(
+                                name: 'Password',
                               ),
-                              focusedBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  width: 1,
-                                  color: Colors.black,
+                              SizedBox(
+                                height: size.height * 0.01,
+                              ),
+                              TextFormField(
+                                controller: passwordController,
+                                decoration: const InputDecoration(
+                                  hintText: 'password',
                                 ),
+                                validator: (value) {
+                                  return MyValidators.passwordValidator(value);
+                                },
                               ),
-                              errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    width: 1,
-                                    color: Theme.of(context).colorScheme.error),
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.error,
-                                ),
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                            ),
-                            validator: (value) {
-                              return MyValidators.passwordValidator(value);
-                            },
+                            ],
                           ),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          child: TextFormField(
-                            controller: rePasswordController,
-                            decoration: InputDecoration(
-                              hintText: 'Re-password',
-                              border: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.black,
-                                ),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(12),
-                                ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const TextFormTitleWidget(
+                                name: 'Re-Password',
                               ),
-                              focusedBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  width: 1,
-                                  color: Colors.black,
+                              SizedBox(
+                                height: size.height * 0.01,
+                              ),
+                              TextFormField(
+                                controller: rePasswordController,
+                                decoration: const InputDecoration(
+                                  hintText: 'Re-password',
                                 ),
+                                validator: (value) {
+                                  return MyValidators.repeatPasswordValidator(
+                                    value: value,
+                                    password: passwordController.text.trim(),
+                                  );
+                                },
                               ),
-                              errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    width: 1,
-                                    color: Theme.of(context).colorScheme.error),
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.error,
-                                ),
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                            ),
-                            validator: (value) {
-                              return MyValidators.repeatPasswordValidator(
-                                value: value,
-                                password: passwordController.text.trim(),
-                              );
-                            },
+                            ],
                           ),
                         ),
                       ],
                     ),
                     SizedBox(
-                      height: size.height * 0.05,
+                      height: size.height * 0.03,
                     ),
                     Align(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SubTitleWidget(
-                            fontSize: 20,
+                            fontSize: 15,
                             text: 'By clicking Sign up you are in agreement of',
                             color: Colors.grey,
                           ),
                           InkWell(
                             onTap: () {},
-                            child: const SubTitleWidget(
-                              fontSize: 20,
+                            child: SubTitleWidget(
+                              fontSize: 15,
                               text: 'Terms & Conditions',
-                              color: Colors.red,
+                              color: Colors.blue[300]!,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
+                    SizedBox(
+                      height: size.height * 0.02,
                     ),
                     Align(
                       alignment: Alignment.center,
                       child: SizedBox(
-                        width: double.infinity,
-                        height: size.height * 0.06,
+                        width: size.width * 0.85,
+                        height: size.height * 0.05,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green[400],
@@ -225,19 +286,13 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           ),
                           onPressed: () async {
-                            await AuthFunctions.signupFuct(
-                              context: context,
-                              emailController: emailController,
-                              passwordController: passwordController,
-                              formkey: _formkey,
-                              mounted: mounted,
-                            );
+                            await _registerFun();
                           },
                           child: const Text(
                             'Signup',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 25,
+                              fontSize: 20,
                             ),
                           ),
                         ),
@@ -245,8 +300,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 50,
+                SizedBox(
+                  height: size.height * 0.02,
                 ),
                 const Row(
                   children: [
@@ -268,21 +323,28 @@ class _SignupScreenState extends State<SignupScreen> {
                     DiverderWidget()
                   ],
                 ),
-                const SizedBox(
-                  height: 50,
+                SizedBox(
+                  height: size.height * 0.01,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const CircleWiget(
-                      color: Colors.blue,
-                      icon: Icons.facebook,
-                      iconSize: 30,
+                    InkWell(
+                      onTap: () async {
+                        await authProvider.faceboodAuth(context);
+                        if (!mounted) return;
+                        Navigator.pushNamed(context, RootScreen.rootName);
+                      },
+                      child: const CircleWiget(
+                        color: Colors.blue,
+                        icon: Icons.facebook,
+                        iconSize: 30,
+                      ),
                     ),
                     InkWell(
                       onTap: () async {
                         UserCredential? userCredential =
-                            await AuthFunctions.signInWithGoogle();
+                            await authProvider.signInWithGoogle();
                         if (userCredential != null) {
                           if (!mounted) return;
                           Navigator.pushNamed(
@@ -303,15 +365,15 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 50,
+                SizedBox(
+                  height: size.height * 0.01,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SubTitleWidget(
                       text: "Already have an account?",
-                      fontSize: 18,
+                      fontSize: 16,
                       color: Colors.grey,
                     ),
                     TextButton(
@@ -322,7 +384,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           'Login',
                           style: TextStyle(
                             color: Colors.red,
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ))

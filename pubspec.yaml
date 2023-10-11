@@ -38,12 +38,15 @@ dependencies:
   firebase_storage: ^11.2.7
   flutter:
     sdk: flutter
+  flutter_facebook_auth: ^6.0.2
   flutter_iconly: ^1.0.2
   google_sign_in: ^6.1.5
   iconly: ^1.0.1
+  image_picker: ^1.0.4
   ionicons: ^0.2.2
   provider: ^6.0.5
   shared_preferences: ^2.2.1
+  twitter_login: ^4.4.2
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -63,6 +66,8 @@ flutter:
     - assets/images/
     - assets/images/logos/
     - assets/images/latest_arrival/
+    - assets/images/alert/
+    - assets/images/profile/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see
